@@ -8,17 +8,37 @@ ApplicationWindow {
     visible: true
     width: Screen.desktopAvailableWidth
     height: Screen.desktopAvailableHeight + 500
-    title: qsTr("TestApplication")
     opacity: 0.5
-    flags: Qt.WindowStaysOnTopHint | Qt.BypassWindowManagerHint | Qt.FramelessWindowHint | Qt.NoDropShadowWindowHint | Qt.ToolTip
+    flags: Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint | Qt.Dialog
 
-    Rectangle{
-        id: fullScreenRectangle
-        width: Screen.width
-        height: Screen.height
-        border.color: "red"
-        border.width: 5
-        z: 1
+    MouseArea {
+        id: mouseArea
+        anchors.fill: parent
+        hoverEnabled: false
+
+        onPressed: {
+            marker.x = mouseArea.mouseX
+            marker.y = mouseArea.mouseY
+            hoverEnabled = true;
+        }
+
+        onPositionChanged: {
+            marker.width = mouseArea.mouseX - marker.x
+            marker.height = mouseArea.mouseY - marker.y
+        }
+
+        onReleased: {
+            hoverEnabled = false
+            root.visible = false
+            areaSelected(marker.x, marker.y, marker.width, marker.height)
+        }
+    }
+
+    Rectangle {
+        id: marker
+        width: 0
+        height: 0
+        color: 'green'
     }
 
     SystemTrayIcon {

@@ -2,16 +2,16 @@ package main
 
 import (
 	"fmt"
-	"image"
-	"image/png"
+	"io/ioutil"
+	"log"
 	"os"
+	"os/exec"
+	"path/filepath"
 
 	"github.com/atotto/clipboard"
 	"github.com/getlantern/systray"
+	"github.com/shitty-inc/sendshit-go"
 	"github.com/sqweek/dialog"
-
-	"github.com/kbinani/screenshot"
-	hook "github.com/robotn/gohook"
 )
 
 func main() {
@@ -24,8 +24,9 @@ func main() {
 
 func onReady() {
 	systray.SetTitle("Sendshit")
-	mOpen := systray.AddMenuItem("Send file", "Send file")
-	mScreenshot := systray.AddMenuItem("Send screenshot", "Send screenshot")
+	mOpen := systray.AddMenuItem("Open File", "Send a file")
+	mScreenshot := systray.AddMenuItem("Take Screenshot", "Send a screenshot")
+	systray.AddSeparator()
 	mQuit := systray.AddMenuItem("Quit", "Quit the app")
 
 	go func() {
@@ -33,46 +34,51 @@ func onReady() {
 			select {
 			case <-mOpen.ClickedCh:
 				filename, _ := dialog.File().Load()
-				if err := clipboard.WriteAll(filename); err != nil {
-					panic(err)
-				}
+				send(filename)
 			case <-mScreenshot.ClickedCh:
-				EvChan := hook.Start()
-				defer hook.End()
+				tmpFile := fmt.Sprintf("%sscreen.png", os.TempDir())
 
-				var topX int = 0
-				var topY int = 0
-				dragging := false
+				cmd := exec.Command("screencapture", "-i", tmpFile)
+				err := cmd.Run()
 
-				for ev := range EvChan {
-					if ev.Kind == hook.MouseHold && int(ev.Button) == 1 {
-						topX = int(ev.X)
-						topY = int(ev.Y)
-						dragging = true
-
-						fmt.Println(ev)
-					}
-
-					if dragging && ev.Kind == hook.MouseDown && int(ev.Button) == 1 {
-						fmt.Println(ev)
-
-						img, err := screenshot.CaptureRect(image.Rect(topX, topY, int(ev.X)-topX, int(ev.Y)-topY))
-						if err != nil {
-							panic(err)
-						}
-
-						fmt.Println(topX, topY, int(ev.X)-topX, int(ev.Y)-topY)
-
-						file, _ := os.Create("test.png")
-						defer file.Close()
-						png.Encode(file, img)
-
-						break
-					}
+				if err != nil {
+					log.Fatalf("cmd.Run() failed with %s\n", err)
 				}
+
+				send(tmpFile)
 			case <-mQuit.ClickedCh:
 				systray.Quit()
 			}
 		}
 	}()
+}
+
+func send(path string) {
+	file, err := ioutil.ReadFile(path)
+
+	if err != nil {
+		log.Fatalf("Couldn't read that shit %s\n", err)
+	}
+
+	key, err := sendshit.GenerateRandomString(24)
+
+	if err != nil {
+		log.Fatalf("Couldn't generate a key for that shit %s\n", err)
+	}
+
+	encodedStr, err := sendshit.EncryptFile(filepath.Base(path), file, key)
+
+	if err != nil {
+		log.Fatalf("Couldn't encrypt that shit %s\n", err)
+	}
+
+	response, err := sendshit.UploadFile(encodedStr)
+
+	if err != nil {
+		log.Fatalf("Couldn't upload that shit %s\n", err)
+	}
+
+	if err := clipboard.WriteAll(fmt.Sprintf("https://sendsh.it/#/%s/%s\n", response.ID, key)); err != nil {
+		panic(err)
+	}
 }

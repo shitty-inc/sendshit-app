@@ -8,6 +8,8 @@ import (
 	"os/exec"
 	"path/filepath"
 
+	icon "./icon"
+
 	"github.com/atotto/clipboard"
 	"github.com/getlantern/systray"
 	"github.com/shitty-inc/sendshit-go"
@@ -23,7 +25,7 @@ func main() {
 }
 
 func onReady() {
-	systray.SetTitle("Sendshit")
+	systray.SetIcon(icon.AppIcon)
 	mOpen := systray.AddMenuItem("Open File", "Send a file")
 	mScreenshot := systray.AddMenuItem("Take Screenshot", "Send a screenshot")
 	systray.AddSeparator()

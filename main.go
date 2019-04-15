@@ -11,6 +11,7 @@ import (
 	icon "./icon"
 
 	"github.com/0xAX/notificator"
+	"github.com/ProtonMail/go-autostart"
 	"github.com/atotto/clipboard"
 	"github.com/getlantern/systray"
 	"github.com/shitty-inc/sendshit-go"
@@ -20,24 +21,38 @@ import (
 var notify *notificator.Notificator
 
 func main() {
-	onExit := func() {
-		fmt.Println("onExit")
-	}
-
 	notify = notificator.New(notificator.Options{
 		DefaultIcon: "icon/icon.png",
 		AppName:     "SendShit",
 	})
 
-	systray.Run(onReady, onExit)
+	systray.Run(onReady, nil)
 }
 
 func onReady() {
+	ex, _ := os.Executable()
+
+	app := &autostart.App{
+		Name:        "SendShit",
+		DisplayName: "SendShit menu bar app",
+		Exec:        []string{ex},
+	}
+
 	systray.SetIcon(icon.AppIcon)
+
 	mOpen := systray.AddMenuItem("Open File", "Send a file")
 	mScreenshot := systray.AddMenuItem("Take Screenshot", "Send a screenshot")
+
 	systray.AddSeparator()
+
+	mToggle := systray.AddMenuItem("Start at Login", "Toggle starting the app on Login")
 	mQuit := systray.AddMenuItem("Quit", "Quit the app")
+
+	if app.IsEnabled() {
+		mToggle.SetTitle("Do not start at Login")
+	} else {
+		mToggle.SetTitle("Start at Login")
+	}
 
 	go func() {
 		for {
@@ -46,16 +61,29 @@ func onReady() {
 				filename, _ := dialog.File().Load()
 				send(filename)
 			case <-mScreenshot.ClickedCh:
-				tmpFile := fmt.Sprintf("%sscreen.png", os.TempDir())
+				randName, _ := sendshit.GenerateRandomString(12)
+				tmpFile := fmt.Sprintf("%sscreenshot-%s.png", os.TempDir(), randName)
 
 				cmd := exec.Command("screencapture", "-i", tmpFile)
 				err := cmd.Run()
 
 				if err != nil {
-					log.Fatalf("cmd.Run() failed with %s\n", err)
+					log.Fatalf("Couldn't capture that shit %s\n", err)
 				}
 
+				fmt.Println(tmpFile)
+
 				send(tmpFile)
+
+				os.Remove(tmpFile)
+			case <-mToggle.ClickedCh:
+				if app.IsEnabled() {
+					app.Disable()
+					mToggle.SetTitle("Start at Login")
+				} else {
+					app.Enable()
+					mToggle.SetTitle("Do not start at Login")
+				}
 			case <-mQuit.ClickedCh:
 				systray.Quit()
 			}

@@ -8,12 +8,11 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	icon "./icon"
-
 	"github.com/0xAX/notificator"
 	"github.com/ProtonMail/go-autostart"
 	"github.com/atotto/clipboard"
 	"github.com/getlantern/systray"
+	"github.com/shitty-inc/sendshit-app/icon"
 	"github.com/shitty-inc/sendshit-go"
 	"github.com/sqweek/dialog"
 )
@@ -71,10 +70,7 @@ func onReady() {
 					log.Fatalf("Couldn't capture that shit %s\n", err)
 				}
 
-				fmt.Println(tmpFile)
-
 				send(tmpFile)
-
 				os.Remove(tmpFile)
 			case <-mToggle.ClickedCh:
 				if app.IsEnabled() {

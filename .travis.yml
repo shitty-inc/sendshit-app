@@ -7,4 +7,14 @@ os:
 script:
   - go build -o build/SendShit.App/Contents/MacOS/sendshit-app -i
 before_deploy:
-  - hdiutil create -srcfolder build/SendShit.App build/SendShit.dmg
+  - hdiutil create -srcfolder build/SendShit.App build/SendShit-uncompressed.dmg
+  - hdiutil convert build/SendShit-uncompressed.dmg -format UDZO -imagekey zlib-level=9 -o build/SendShit.App build/SendShit.dmg
+deploy:
+  provider: releases
+  skip_cleanup: true
+  api_key:
+    secure:
+  file: build/SendShit.dmg
+  on:
+    repo: shitty-inc/sendshit-app
+    tags: true

@@ -1,0 +1,10 @@
+language: go
+sudo: false
+go:
+  - tip
+os:
+  - osx
+script:
+  - go build -o build/SendShit.App/Contents/MacOS/sendshit-app -i
+before_deploy:
+  - hdiutil create -srcfolder build/SendShit.App build/SendShit.dmg

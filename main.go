@@ -10,16 +10,24 @@ import (
 
 	icon "./icon"
 
+	"github.com/0xAX/notificator"
 	"github.com/atotto/clipboard"
 	"github.com/getlantern/systray"
 	"github.com/shitty-inc/sendshit-go"
 	"github.com/sqweek/dialog"
 )
 
+var notify *notificator.Notificator
+
 func main() {
 	onExit := func() {
 		fmt.Println("onExit")
 	}
+
+	notify = notificator.New(notificator.Options{
+		DefaultIcon: "icon/icon.png",
+		AppName:     "SendShit",
+	})
 
 	systray.Run(onReady, onExit)
 }
@@ -83,4 +91,6 @@ func send(path string) {
 	if err := clipboard.WriteAll(fmt.Sprintf("https://sendsh.it/#/%s/%s\n", response.ID, key)); err != nil {
 		panic(err)
 	}
+
+	notify.Push("", "Link has been copied to the clipboard!", "", notificator.UR_NORMAL)
 }

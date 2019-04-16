@@ -16,5 +16,5 @@ Download the latest `.dmg` file from the [releases](https://github.com/shitty-in
 ## Building
 
 ```bash
-$ go build -o build/SendShit.App/Contents/MacOS/sendshit-app
+$ go build -o build/Sendshit.app/Contents/MacOS/sendshit-app
 ```

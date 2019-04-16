@@ -22,7 +22,7 @@ var notify *notificator.Notificator
 func main() {
 	notify = notificator.New(notificator.Options{
 		DefaultIcon: "icon/icon.png",
-		AppName:     "SendShit",
+		AppName:     "Sendshit",
 	})
 
 	systray.Run(onReady, nil)
@@ -32,8 +32,8 @@ func onReady() {
 	ex, _ := os.Executable()
 
 	app := &autostart.App{
-		Name:        "SendShit",
-		DisplayName: "SendShit menu bar app",
+		Name:        "Sendshit",
+		DisplayName: "Sendshit menu bar app",
 		Exec:        []string{ex},
 	}
 

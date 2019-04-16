@@ -5,7 +5,7 @@
 	<key>CFBundleExecutable</key>
 	<string>sendshit-app</string>
 	<key>CFBundleIconFile</key>
-	<string>SendShit.icns</string>
+	<string>Sendshit.icns</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.sendshit.tray</string>
 	<key>NSHighResolutionCapable</key>

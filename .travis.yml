@@ -13,7 +13,7 @@ deploy:
   provider: releases
   skip_cleanup: true
   api_key:
-    secure:
+    secure: dMWkd/9UG/Z+4AGTnE19xO6VfQn1r3YTN26v0VZmRFFarrHOvg2Z48jmq1yUhWuxmkGB2oCG6boRHuobB1dvFM2RA8QkYc35+UrpmPbiknPF7bcILT3MS4HakdJHcEuNniAQUjZBQb7MqE4hdmy5YPE1B8OYZr4n7cKPW6TK6qkNLi9NaHPt8L3PfjccOo6pf+bF/sGV1maSJjPfeR7zQWUMm1oax49C3R5tD0D+o9dGrRGqcWZbrTBe1PaNXi2J2xLaXQXVss9LLCyqXKbw12C+zfwhjbTrQi1eloOYQiqoG/ZJM6uG7LVfGtKLSMTx4qKMrz4YOOjp30UEZNUOuCL9RE1dof/2s6MRORMEkn8XnpFiaqs8Bc526VCFKamGAGqltzTbmJ0Oa502ruY9JFrWU+op5frgm2/nO+FKOj4Ocf+9SGbFQDt7uX42y/QU5KABTN3/Ptu1rEv7FH+OF7hBCeTusHkc23OITWMkzKlzK6MvagjORJPjojix1c5yQrki0tcPElxJlUxUpV+JO0/NesisO3SQFeugT02iwDhRNzZ5UvTmPAxkV3uIYSPuBcb4eXYOyPHaknbK0PTpu/FloYlP0BBRaeZz3Oe5JsFmJrOloZt6BMTAmYwMNs8wZfM8KRQ3DsHqhpjWKM5L6UfgZHvtbM0UivpLKPYJrC8=
   file: build/SendShit.dmg
   on:
     repo: shitty-inc/sendshit-app
